@@ -12,21 +12,37 @@ export default function PokemonHook(){
 	// Don't do setState in top level of function 
 	// setPokemon("whatever we want");
 
-    // runs at the start or on the first render of this component
+	// runs at the start or on the first render of this component
 	// useEffect((), []) is equivalent to componentDidMount
 	// because the dependency array is empty 
-	useEffect(() => {
-		setPokemon({name:"Pikachu"});
+	useEffect( () => {
+
+        // async operations and promises must be executed inside
+        // a new async block/scope within the useEffect callback
+		let fetchData = async () => {
+			let apiResponse = await fetch("https://pokeapi.co/api/v2/pokemon/25");
+		    let apiData = await apiResponse.json();
+
+		    setPokemon(apiData);
+		}
+
+		fetchData();
 	}, []);
 
 	function someFunction() {
 		console.log("blah blah")
 	}
 
-	return (
-		<div>
-			<h1>{someExampleState}</h1>
-			<h1>{pokemon.name}</h1>
-		</div>
-	)
+	if (pokemon.name){
+		return (
+			<div>
+				<h1>{someExampleState}</h1>
+				<h1>{pokemon.name}</h1>
+			</div>
+		)
+	} else {
+		return (
+			<div>No data to show...</div>
+		)
+	}
 }
